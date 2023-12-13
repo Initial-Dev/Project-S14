@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S14-API", "S14-API\S14-API.csproj", "{8AFD8063-D544-42D7-BBC9-F2F2153F5589}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S14-BlazorUI", "S14-BlazorUI\S14-BlazorUI.csproj", "{8254D124-9B38-4BA2-B538-900FD3FB759B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8AFD8063-D544-42D7-BBC9-F2F2153F5589}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AFD8063-D544-42D7-BBC9-F2F2153F5589}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AFD8063-D544-42D7-BBC9-F2F2153F5589}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AFD8063-D544-42D7-BBC9-F2F2153F5589}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8254D124-9B38-4BA2-B538-900FD3FB759B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8254D124-9B38-4BA2-B538-900FD3FB759B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8254D124-9B38-4BA2-B538-900FD3FB759B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8254D124-9B38-4BA2-B538-900FD3FB759B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CDABDEB-1EAD-4148-8AEF-84CAFBDEB2FB}
+	EndGlobalSection
+EndGlobal
