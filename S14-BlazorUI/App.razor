@@ -1,12 +1,16 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@namespace S14_BlazorUI
+@using S14_BlazorUI.Components
+@using S14_BlazorUI.Models
+@using S14_BlazorUI.Services
+@using S14_BlazorUI.Pages
+
+<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <RouteView RouteData="@routeData" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>
         <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
             <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
     </NotFound>
 </Router>

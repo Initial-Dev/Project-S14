@@ -1,0 +1,64 @@
+﻿@namespace S14_BlazorUI.Components
+
+<div class="container mt-3">
+    <div class="row">
+        @if (academicClasses != null)
+        {
+            @foreach (var academicClass in academicClasses)
+            {
+                <div class="col-md-4 mb-4">
+                    <a href="Class/@academicClass.Id" class="card h-100 text-decoration-none">
+                        <div class="card-body">
+                            <h5 class="card-title">@academicClass.Level</h5>
+                                @if (academicClass.HeadTeacher != null)
+                                {
+                                    <p class="card-text">Professeur Principal: @academicClass.HeadTeacher.FirstName @academicClass.HeadTeacher.LastName</p>
+                                }
+                                else
+                                {
+                                    <p class="card-text">Professeur Principal: N/A</p>
+                                }
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Loading...</p>
+        }
+        <div class="col-md-4 mb-4">
+            <a href="students" class="card h-100 text-decoration-none">
+                <div class="card-body">
+                    <h5 class="card-title">Tous les élèves</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="teachers" class="card h-100 text-decoration-none">
+                <div class="card-body">
+                    <h5 class="card-title">Tous les professeurs</h5>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+@using S14_BlazorUI.Models
+@inject S14_BlazorUI.Services.IAcademicClassService AcademicClassService
+
+@code {
+
+    private List<AcademicClass> academicClasses;
+
+    protected override async Task OnInitializedAsync()
+    {
+        academicClasses = await AcademicClassService.GetAcademicClassesAsync();
+
+        if (academicClasses == null)
+        {
+            academicClasses = new List<AcademicClass>();
+        }
+    }
+}
+

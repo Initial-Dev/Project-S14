@@ -1,0 +1,59 @@
+﻿@namespace S14_BlazorUI.Pages
+@page "/class/{ClassId:int}"
+
+@inject NavigationManager NavManager
+
+@if (academicClass == null)
+{
+    <p class="alert alert-info">Loading...</p>
+}
+else
+{
+    <h3>@academicClass.Level</h3>
+    <p>Professeur Principal: @academicClass.HeadTeacher.FirstName @academicClass.HeadTeacher.LastName</p>
+
+    <h4>Élèves</h4>
+    <table class="table table-bordered table-hover table-responsive">
+        <thead>
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Genre</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in academicClass.Students.Students)
+            {
+
+                <tr>
+                    <td scope="row">@student.LastName</td>
+                    <td>@student.FirstName</td>
+                    @if(student.Gender == 0)
+                    {
+                        <td>M</td>
+                    } else
+                    {
+                        <td>F</td>
+                    }
+                    <td><button class="btn btn-light" @onclick="@(() => NavManager.NavigateTo($"/student/{student.Id}/grades"))">Voir Notes</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@using S14_BlazorUI.Models
+
+@inject S14_BlazorUI.Services.IAcademicClassService AcademicClassService
+
+@code {
+    [Parameter] public int ClassId { get; set; }
+
+    private AcademicClass academicClass;
+
+    protected override async Task OnInitializedAsync()
+    {
+        academicClass = await AcademicClassService.GetAcademicClassByIdAsync(ClassId);
+    }
+}

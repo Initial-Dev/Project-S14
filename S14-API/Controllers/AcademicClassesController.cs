@@ -11,7 +11,6 @@ namespace S14_API.Controllers
 {
 
     [Route("api/[controller]")]
-    [Authorize]
     [ApiController]
     public class AcademicClassesController : ControllerBase
     {
@@ -25,13 +24,20 @@ namespace S14_API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AcademicClass>>> GetAcademicClasses()
         {
-            return await _context.AcademicClasses.ToListAsync();
+            var academicClasses = await _context.AcademicClasses
+                .Include(ac => ac.HeadTeacher)
+                .ToListAsync();
+
+            return academicClasses;
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<AcademicClass>> GetAcademicClass(int id)
         {
-            var academicClass = await _context.AcademicClasses.FindAsync(id);
+            var academicClass = await _context.AcademicClasses
+                .Include(ac => ac.HeadTeacher)
+                .Include(ac => ac.Students)
+                .FirstOrDefaultAsync(ac => ac.Id == id);
 
             if (academicClass == null)
             {
@@ -41,24 +47,23 @@ namespace S14_API.Controllers
             return academicClass;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<AcademicClass>> PostAcademicClass(AcademicClass academicClass)
+        [HttpPut("{id}/addStudent/{studentId}")]
+        public async Task<IActionResult> UpdateStudentAcademicClass(int studentId, int id)
         {
-            _context.AcademicClasses.Add(academicClass);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAcademicClass", new { id = academicClass.Id }, academicClass);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAcademicClass(int id, AcademicClass academicClass)
-        {
-            if (id != academicClass.Id)
+            var student = await _context.Students.FindAsync(studentId);
+            if (student == null)
             {
-                return BadRequest();
+                return NotFound("Student not found.");
             }
 
-            _context.Entry(academicClass).State = EntityState.Modified;
+            var academicClassExists = await _context.AcademicClasses.AnyAsync(ac => ac.Id == id);
+            if (!academicClassExists)
+            {
+                return NotFound("Academic class not found.");
+            }
+
+            student.AcademicClassId = id;
+            _context.Entry(student).State = EntityState.Modified;
 
             try
             {
@@ -66,7 +71,7 @@ namespace S14_API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AcademicClassExists(id))
+                if (!StudentExists(studentId))
                 {
                     return NotFound();
                 }
@@ -79,20 +84,11 @@ namespace S14_API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAcademicClass(int id)
+        private bool StudentExists(int id)
         {
-            var academicClass = await _context.AcademicClasses.FindAsync(id);
-            if (academicClass == null)
-            {
-                return NotFound();
-            }
-
-            _context.AcademicClasses.Remove(academicClass);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return _context.Students.Any(e => e.Id == id);
         }
+
 
         private bool AcademicClassExists(int id)
         {

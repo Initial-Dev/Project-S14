@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using S14_API.Data;
 using S14_API.Models;
+using S14_API.Models.DTO;
 
 namespace S14_API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     [ApiController]
     public class GradesController : ControllerBase
     {
@@ -37,9 +37,31 @@ namespace S14_API.Controllers
             return grade;
         }
 
+        [HttpGet("student/{studentId}")]
+        public async Task<ActionResult<IEnumerable<Grade>>> GetGradesByStudent(int studentId)
+        {
+            var grades = await _context.Grades
+                                       .Where(grade => grade.StudentId == studentId)
+                                       .Include(grade => grade.Subject)
+                                       .Include(grade => grade.Teacher)
+                                       .ToListAsync();
+
+            if (!grades.Any())
+            {
+                return NotFound();
+            }
+
+            return grades;
+        }
+
+
         [HttpPost]
         public async Task<ActionResult<Grade>> PostGrade(Grade grade)
         {
+            if (grade.Value < 0 || grade.Value > 20)
+            {
+                return BadRequest("Grade must be between 0 and 20.");
+            }
             _context.Grades.Add(grade);
             await _context.SaveChangesAsync();
 
@@ -52,6 +74,11 @@ namespace S14_API.Controllers
             if (id != grade.Id)
             {
                 return BadRequest();
+            }
+
+            if (grade.Value < 0 || grade.Value > 20)
+            {
+                return BadRequest("Grade must be between 0 and 20.");
             }
 
             _context.Entry(grade).State = EntityState.Modified;
@@ -88,6 +115,24 @@ namespace S14_API.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpGet("student/subjects/{studentId}")]
+        public async Task<ActionResult<IEnumerable<GradeDTO>>> GetStudentGradesBySubject(int studentId, int subjectId)
+        {
+            var grades = await _context.Grades
+            .Include(grade => grade.Subject)
+            .Where(grade => grade.StudentId == studentId)
+            .Select(grade => new GradeDTO
+            {
+                StudentId = grade.StudentId,
+                TeacherId = grade.TeacherId,
+                SubjectId = grade.Subject.Id,
+                GradeValue = grade.Value,
+            })
+            .ToListAsync();
+
+            return Ok(grades);
         }
 
         private bool GradeExists(int id)

@@ -1,0 +1,53 @@
+﻿@namespace S14_BlazorUI.Pages
+@page "/student/{StudentId:int}/grades"
+
+<div class="form-group">
+    <label for="subjectSelect">Matière</label>
+    <select class="form-control" id="subjectSelect" @onchange="OnSubjectSelected">
+        <option value="">Selectionner une matière</option>
+        @foreach (var subjectGrades in subjectGradesList)
+        {
+            <option value="@subjectGrades.SubjectName">@subjectGrades.SubjectName - @subjectGrades.TeacherName</option>
+        }
+    </select>
+</div>
+
+@if (!string.IsNullOrEmpty(selectedSubject))
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var grade in subjectGradesList.FirstOrDefault(s => s.SubjectName == selectedSubject)?.Grades ?? new List<GradeInfo>())
+            {
+                <tr>
+                    <td>@grade.Date.ToString("dd MMM yyyy")</td>
+                    <td>@grade.Value</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@inject S14_BlazorUI.Services.IGradeService GradeService
+
+@code {
+    [Parameter]
+    public int StudentId { get; set; }
+    private List<SubjectGrades> subjectGradesList;
+    private string selectedSubject;
+
+    protected override async Task OnInitializedAsync()
+    {
+        subjectGradesList = await GradeService.GetGradesBySubjectForStudentAsync(StudentId);
+    }
+
+    private void OnSubjectSelected(ChangeEventArgs e)
+    {
+        selectedSubject = e.Value.ToString();
+    }
+}

@@ -1,0 +1,59 @@
+﻿@namespace S14_BlazorUI.Pages
+@page "/teachers"
+
+<h3>Tout les professeurs</h3>
+
+@if (teachers == null)
+{
+    <p class="alert alert-info">Loading...</p>
+}
+else
+{
+    <table class="table table-bordered table-hover table-responsive">
+        <thead>
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Matières</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var teacher in teachers)
+            {
+                <tr>
+                    <td scope="row">@teacher.LastName</td>
+                    <td>@teacher.FirstName</td>
+                    @if (teacher.Gender == 0)
+                    {
+                        <td>M</td>
+                    }
+                    else
+                    {
+                        <td>F</td>
+                    }
+                    <td>
+                        @foreach (var subject in teacher.Subjects.Subjects)
+                        {
+                            <span>@subject.Name</span>
+                            <br>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@using S14_BlazorUI.Models
+
+@inject S14_BlazorUI.Services.ITeacherService TeacherService
+
+@code {
+    private List<Teacher> teachers;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        teachers = await TeacherService.GetTeachersAsync();
+    }
+}

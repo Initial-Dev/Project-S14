@@ -45,11 +45,11 @@ namespace S14_API.Controllers
         [HttpPost("login/teacher")]
         public async Task<IActionResult> LoginTeacher([FromBody] Login model)
         {
-            var student = await _context.Students
+            var teacher = await _context.Teachers
                                 .SingleOrDefaultAsync(s => s.Username == model.Username);
-            if (student != null && VerifyPassword(model.Password, student.Password))
+            if (teacher != null && VerifyPassword(model.Password, teacher.Password))
             {
-                var token = GenerateJwtToken(student.Username, "Teacher");
+                var token = GenerateJwtToken(teacher.Username, "Teacher");
                 return Ok(new { Token = token });
             }
             return Unauthorized();

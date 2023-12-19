@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using S14_API.Data;
 using S14_API.Models;
+using S14_API.Models.DTO;
 
 namespace S14_API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     [ApiController]
     public class TeachersController : ControllerBase
     {
@@ -37,57 +37,28 @@ namespace S14_API.Controllers
             return teacher;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Teacher>> PostTeacher(Teacher teacher)
+        [HttpGet("{id}/subjects")]
+        public async Task<ActionResult<IEnumerable<SubjectDto>>> GetSubjectsByTeacher(int id)
         {
-            _context.Teachers.Add(teacher);
-            await _context.SaveChangesAsync();
+            var subjects = await _context.Subjects
+                .Where(s => s.TeacherId == id)
+                .Select(s => new SubjectDto { Name = s.Name })
+                .ToListAsync();
 
-            return CreatedAtAction("GetTeacher", new { id = teacher.Id }, teacher);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTeacher(int id, Teacher teacher)
-        {
-            if (id != teacher.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(teacher).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TeacherExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTeacher(int id)
-        {
-            var teacher = await _context.Teachers.FindAsync(id);
-            if (teacher == null)
+            if (!subjects.Any())
             {
                 return NotFound();
             }
 
-            _context.Teachers.Remove(teacher);
-            await _context.SaveChangesAsync();
+            return Ok(subjects);
+        }
 
-            return NoContent();
+
+
+        [HttpGet("subjects")]
+        public async Task<ActionResult<IEnumerable<Teacher>>> GetTeachersAndSubjects()
+        {
+            return await _context.Teachers.Include(t => t.Subjects).ToListAsync();
         }
 
         private bool TeacherExists(int id)

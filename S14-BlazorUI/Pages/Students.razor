@@ -1,0 +1,52 @@
+﻿@namespace S14_BlazorUI.Pages
+@page "/students"
+@using S14_BlazorUI.Models
+@inject S14_BlazorUI.Services.IStudentService StudentService
+
+<h3>Élèves</h3>
+
+@if (students == null)
+{
+    <p class="alert alert-info">Loading...</p>
+}
+else
+{
+    <table class="table table-bordered table-hover table-responsive">
+        <thead>
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Genre</th>
+                <th scope="col">Classe</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in students)
+            {
+                <tr>
+                    <td scope="row">@student.LastName</td>
+                    <td>@student.FirstName</td>
+                    @if (student.Gender == 0)
+                    {
+                        <td>M</td>
+                    }
+                    else
+                    {
+                        <td>F</td>
+                    }
+                    <td>@student.AcademicClass.Level</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Student> students;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var allStudents = await StudentService.GetStudentsAsync();
+        students = allStudents.OrderBy(s => s.LastName).ThenBy(s => s.FirstName).ToList();
+    }
+}
