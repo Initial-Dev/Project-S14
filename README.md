@@ -12,7 +12,7 @@ Before you begin, ensure you have met the following requirements:
 To clone the Visual Studio Solution from the repository, run the following command in your terminal or command prompt:
 
 ```bash
-git clone https://github.com/yourusername/your-repo-name.git
+git clone https://github.com/Initial-Dev/Project-S14.git
 ```
 
 ## Setting Up the Database
